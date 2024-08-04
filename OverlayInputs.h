@@ -1,29 +1,3 @@
-/*
-MIT License
-
-Copyright (c) 2021-2022 L. E. Spalt
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-#pragma once
-
 #include "Overlay.h"
 #include "Config.h"
 #include "OverlayDebug.h"
@@ -100,7 +74,7 @@ protected:
             &textFormat
         );
 
-        // Draw throttle and brake values
+        // Draw text function
         auto drawText = [&](const std::wstring& text, float2 position, D2D1::ColorF color) {
             Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> textBrush;
             m_renderTarget->CreateSolidColorBrush(color, &textBrush);
@@ -170,6 +144,7 @@ protected:
         steeringLineSink->EndFigure(D2D1_FIGURE_END_OPEN);
         steeringLineSink->Close();
 
+        // Draw everything
         m_renderTarget->BeginDraw();
         m_brush->SetColor(g_cfg.getFloat4(m_name, "throttle_fill_col", float4(0.2f, 0.45f, 0.15f, 0.6f)));
         m_renderTarget->FillGeometry(throttleFillPath.Get(), m_brush.Get());
@@ -184,11 +159,13 @@ protected:
 
 
 
-        // Draw numerical values for throttle and brake
+        // Throttle and Brake Values
         float throttleValue = ir_Throttle.getFloat() * 100.0f;
         float brakeValue = ir_Brake.getFloat() * 100.0f;
-        drawText(std::to_wstring((int)throttleValue) + L"%", float2(w - 100, 10), D2D1::ColorF(D2D1::ColorF::White));
-        drawText(std::to_wstring((int)brakeValue) + L"%", float2(w - 100, 30), D2D1::ColorF(D2D1::ColorF::White));
+
+        // Draw throttle and brake values
+        drawText(std::to_wstring((int)throttleValue) + L"%", float2(10, 10), D2D1::ColorF(D2D1::ColorF::Green)); // Throttle in green
+        drawText(std::to_wstring((int)brakeValue) + L"%", float2(10, 40), D2D1::ColorF(D2D1::ColorF::Red));   // Brake in red
 
         m_renderTarget->EndDraw();
     }
